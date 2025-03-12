@@ -1,17 +1,18 @@
 import datetime
-from collections.abc import Callable
 import pytest
-from unittest import mock
+
+
+class NewDate(datetime.date):
+    @classmethod
+    def today(cls) -> datetime.date:
+        return cls(2022, 2, 5)
 
 
 @pytest.fixture()
 def mocked_datetime_date_today() -> None:
-    with (mock.patch("datetime.date.today", return_value=datetime.date(
-            2022, 2, 5)) as mock_test_datetime):
-        yield mock_test_datetime
+    datetime.date = NewDate
 
 
-def test_datetime_date_today(mocked_datetime_date_today: Callable) -> None:
+def test_datetime_date_today(mocked_datetime_date_today: None) -> None:
     today = datetime.date.today()
-    mocked_datetime_date_today.assert_called_once()
     assert today == datetime.date(2022, 2, 5)
